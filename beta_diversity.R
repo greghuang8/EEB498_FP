@@ -8,7 +8,7 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.3
+# Version: 1.4
 # Author: Greg Huang
 # Last update: March 20, 2018
 #
@@ -16,6 +16,7 @@
 #         1.1  Quick write up of the code
 #         1.2  Clean up; Apply code to actual data
 #         1.3  Added H-P beta-diversity analysis 
+#         1.4  Plot edits
 # ==============================================================================
 
 #### Install required packages ####
@@ -104,16 +105,19 @@ HP_LCBD <- data.frame(beta_r1_HP$LCBD)
 #### INAKI - SCBD Plots ####
 
 #plot order
-plot(sort(beta_r1_order$SCBD,decreasing=T),type="n")
+plot(sort(beta_r1_order$SCBD,decreasing=T),type="n", 
+     main = "SCBD of Host (order)", ylab = "SCBD")
 text(sort(beta_r1_order$SCBD,decreasing=T),
      labels=names(sort(beta_r1_order$SCBD,decreasing=T)),cex=0.5)
 
 #plot infections
-plot(sort(beta_r1_infections$SCBD,decreasing=T),type="n")
+plot(sort(beta_r1_infections$SCBD,decreasing=T),type="n",
+     main = "SCBD of Parasite (infection)", ylab = "SCBD")
 text(sort(beta_r1_infections$SCBD,decreasing=T),
      labels=names(sort(beta_r1_infections$SCBD,decreasing=T)),cex=0.5)
 
 #plot HP
-plot(sort(beta_r1_HP$SCBD,decreasing=T),type="n")
+plot(sort(beta_r1_HP$SCBD,decreasing=T),type="n", 
+     main = "SCBD of H-P interaction (H-P)", ylab = "SCBD")
 text(sort(beta_r1_HP$SCBD,decreasing=T),
      labels=names(sort(beta_r1_HP$SCBD,decreasing=T)),cex=0.5)
