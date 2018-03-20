@@ -8,13 +8,14 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.2
+# Version: 1.3
 # Author: Greg Huang
 # Last update: March 20, 2018
 #
 # Versions: 
 #         1.1  Quick write up of the code
 #         1.2  Clean up; Apply code to actual data
+#         1.3  Added H-P beta-diversity analysis 
 # ==============================================================================
 
 #### Install required packages ####
@@ -30,6 +31,10 @@ if(!require(adespatial, quietly = TRUE)){
   library(adespatial)
 }
 
+# For rbind with dplyr
+library(dplyr)
+
+
 #### Load in .csv files ####
 order_counts <- read.csv("zones_orders_counts_key.csv")
 colnames(order_counts)[1] <- "Bats"
@@ -37,6 +42,12 @@ colnames(order_counts)[1] <- "Bats"
 infection_counts <- read.csv("zones_infections_counts_key.csv")
 colnames(infection_counts)[1] <- "Bacteria"
 
+HP_zone1 <- read.csv("zone1_hp_interactions.csv")
+HP_zone2 <- read.csv("zone2_hp_interactions.csv")
+HP_zone3 <- read.csv("zone3_hp_interactions.csv")
+HP_zone4 <- read.csv("zone4_hp_interactions.csv")
+HP_counts <- bind_rows(HP_zone1, HP_zone2, HP_zone3, HP_zone4)
+HP_counts[is.na(HP_counts)] <- 0
 
 #### Beta diversity calculation ####
 
@@ -53,11 +64,24 @@ infection_counts_hel <- decostand(infection_counts, "hel")
 (beta_r1_infections <- beta.div(infection_counts))  
 beta_r1_infections<-(beta_r1_infections = beta.div(infection_counts))
 
+# Calculate beta-diversities for Host-parasite interactions 
+# across zones
+HP_counts_hel <- decostand(HP_counts, "hel")
+(beta_r1_HP <- beta.div(HP_counts))
+beta_r1_HP <- (beta_r1_HP = beta.div(HP_counts))
+
 # Save results into data frames
+# order
 order_SCBD <- data.frame(beta_r1_order$SCBD)
 order_LCBD <- data.frame(beta_r1_order$LCBD)
+
+# infections
 infections_SCBD <- data.frame(beta_r1_infections$SCBD)
 infections_LCBD <- data.frame(beta_r1_infections$LCBD)
+
+# H-P interactions (order - infections)
+HP_SCBD <- data.frame(beta_r1_HP$SCBD)
+HP_LCBD <- data.frame(beta_r1_HP$LCBD)
 
 
 #### Check for significance ####
@@ -66,6 +90,7 @@ infections_LCBD <- data.frame(beta_r1_infections$LCBD)
 (order_r1_sig_LCBD <- which(beta_r1_order$p.LCBD <= 0.05))
 # not good: it's all pretty high, return null
 (infection_r1_sig_LCBD <- which(beta_r1_infections$p.LCBD <= 0.05))
+(HP_r1_sig_LCBD <- which(beta_r1_HP$p.LCBD <= 0.05))
 
 
 #### Maps of LCBD values and richness per quadrat ####
@@ -78,8 +103,17 @@ infections_LCBD <- data.frame(beta_r1_infections$LCBD)
 
 #### INAKI - SCBD Plots ####
 
+#plot order
 plot(sort(beta_r1_order$SCBD,decreasing=T),type="n")
-text(sort(beta_r1_order$SCBD,decreasing=T),labels=names(sort(beta_r1_order$SCBD,decreasing=T)),cex=0.5)
+text(sort(beta_r1_order$SCBD,decreasing=T),
+     labels=names(sort(beta_r1_order$SCBD,decreasing=T)),cex=0.5)
 
+#plot infections
 plot(sort(beta_r1_infections$SCBD,decreasing=T),type="n")
-text(sort(beta_r1_infections$SCBD,decreasing=T),labels=names(sort(beta_r1_infections$SCBD,decreasing=T)),cex=0.5)
+text(sort(beta_r1_infections$SCBD,decreasing=T),
+     labels=names(sort(beta_r1_infections$SCBD,decreasing=T)),cex=0.5)
+
+#plot HP
+plot(sort(beta_r1_HP$SCBD,decreasing=T),type="n")
+text(sort(beta_r1_HP$SCBD,decreasing=T),
+     labels=names(sort(beta_r1_HP$SCBD,decreasing=T)),cex=0.5)
