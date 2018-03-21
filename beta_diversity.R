@@ -8,9 +8,9 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.5
+# Version: 1.6
 # Author: Greg Huang
-# Last update: March 20, 2018
+# Last update: March 21, 2018
 #
 # Versions: 
 #         1.1  Quick write up of the code
@@ -19,6 +19,7 @@
 #         1.4  Plot edits
 #         1.5  Add code for H-H beta diversity analysis,
 #              also added code for SCBD significance testing
+#         1.6  Add code for LCBD plotting. Script nearing completion.
 # ==============================================================================
 
 #### Install required packages ####
@@ -74,6 +75,12 @@ HH_transpose <- data.frame(t(HH_unique[-1]))
 colnames(HH_transpose) <- HH_unique[,1]
 rownames(HH_transpose) <- c(1:4)
 
+# For mapping: twc.xy contains xy coordinates of each point
+twc.xy <- read.csv("twc_cellid_xy.csv")
+
+# The LCBD values are mapped to the 699 unique locations
+mapped.lcbds <- read.csv("LCBDs_699.csv")
+
 #### Beta diversity calculation and Output ####
 
 # SCBD - Species Contribution to Beta Diversity
@@ -104,26 +111,26 @@ beta_r1_HH <- (beta_r1_HH = beta.div(HH_transpose))
 # order
 order_SCBD <- data.frame(beta_r1_order$SCBD)
 order_LCBD <- data.frame(beta_r1_order$LCBD)
-write.table(beta_r1_order$SCBD, file="beta_r1_order_SCBD.txt")
-write.table(beta_r1_order$LCBD, file="beta_r1_order_LCBD.txt")
+write.csv(beta_r1_order$SCBD, file="beta_r1_order_SCBD.csv")
+write.csv(beta_r1_order$LCBD, file="beta_r1_order_LCBD.csv")
 
 # infections
 infections_SCBD <- data.frame(beta_r1_infections$SCBD)
 infections_LCBD <- data.frame(beta_r1_infections$LCBD)
-write.table(beta_r1_infections$SCBD, file="beta_r1_infections_SCBD.txt")
-write.table(beta_r1_infections$LCBD, file="beta_r1_infections_LCBD.txt")
+write.csv(beta_r1_infections$SCBD, file="beta_r1_infections_SCBD.csv")
+write.csv(beta_r1_infections$LCBD, file="beta_r1_infections_LCBD.csv")
 
 # H-P interactions (order - infections)
 HP_SCBD <- data.frame(beta_r1_HP$SCBD)
 HP_LCBD <- data.frame(beta_r1_HP$LCBD)
-write.table(beta_r1_HP$SCBD, file="beta_r1_HP_SCBD.txt")
-write.table(beta_r1_HP$LCBD, file="beta_r1_HP_LCBD.txt")
+write.csv(beta_r1_HP$SCBD, file="beta_r1_HP_SCBD.csv")
+write.csv(beta_r1_HP$LCBD, file="beta_r1_HP_LCBD.csv")
 
 # H-H interactions (order - order)
 HH_SCBD <- data.frame(beta_r1_HH$SCBD)
 HH_LCBD <- data.frame(beta_r1_HH$LCBD)
-write.table(beta_r1_HH$SCBD, file="beta_r1_HH_SCBD.txt")
-write.table(beta_r1_HH$LCBD, file="beta_r1_HH_LCBD.txt")
+write.csv(beta_r1_HH$SCBD, file="beta_r1_HH_SCBD.csv")
+write.csv(beta_r1_HH$LCBD, file="beta_r1_HH_LCBD.csv")
 
 #### Check for SCBD significance ####
 
@@ -156,19 +163,34 @@ HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
 # not too good, but we'll plot those
 
 #### Maps of LCBD values and richness per quadrat ####
-# twc.xy <- read.csv("pd_included.csv")
-# 
-# plot(twc.xy, asp=1, type="n", 
-#      xlab="Longitude (m)", ylab="Latitude (m)", 
-#      main="LCBD indices, for Parasites", 
-#      xlim=c(0,2.5), ylim=c(0,10))
-# points(twc.xy,pch=21, col="white", bg="steelblue2", 
-#        cex=18*sqrt(beta_r1_infections$LCBD))
-# 
-# points(twc.xy[res1.signif.LCBD,],pch=21, col="white",
-#        bg="red", cex=18*sqrt(beta.res1$LCBD[res1.signif.LCBD]))
-# text(twc.xy, labels=1:70, pos=4, cex=0.8, offset=0.7)
 
+plot(twc.xy, asp=1, type="n",
+     xlab="Longitude (m)", ylab="Latitude (m)",
+     main="LCBD indices, for hosts",
+     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+points(twc.xy,pch=15, col="red", bg="red",
+       cex=1*sqrt(mapped.lcbds$orderLCBD))
+
+plot(twc.xy, asp=1, type="n",
+     xlab="Longitude (m)", ylab="Latitude (m)",
+     main="LCBD indices, for infections",
+     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+points(twc.xy,pch=15, col="steelblue2", bg="steelblue2",
+       cex=1*sqrt(mapped.lcbds$InfectionLCBD))
+
+plot(twc.xy, asp=1, type="n",
+     xlab="Longitude (m)", ylab="Latitude (m)",
+     main="LCBD indices, for H-P interactions",
+     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+points(twc.xy,pch=15, col="green", bg="steelblue2",
+       cex=1*sqrt(mapped.lcbds$H.PLCBD))
+
+plot(twc.xy, asp=1, type="n",
+     xlab="Longitude (m)", ylab="Latitude (m)",
+     main="LCBD indices, for H-H interactions",
+     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+points(twc.xy,pch=15, col="orange", bg="steelblue2",
+       cex=1*sqrt(mapped.lcbds$HHLCBD))
 
 #### INAKI - SCBD Plots ####
 
