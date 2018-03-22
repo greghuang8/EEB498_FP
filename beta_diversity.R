@@ -8,7 +8,7 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.7
+# Version: 1.8
 # Author: Greg Huang
 # Last update: March 22, 2018
 #
@@ -20,7 +20,8 @@
 #         1.5  Add code for H-H beta diversity analysis,
 #              also added code for SCBD significance testing
 #         1.6  Add code for LCBD plotting. Script nearing completion.
-#         1.7  Richness, simpson's, and shannon's calculation. Minor edits. 
+#         1.7  Richness, simpson's, and shannon's calculation. 
+#         1.8  Edit comments and typos
 # ==============================================================================
 
 #### Install required packages ####
@@ -189,19 +190,24 @@ HH_SCBD_mean <- mean(HH_SCBD$beta_r1_HH.SCBD)
 HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
 
 #### Check for LCBD significance ####
+
 # count the locations of p.LCBD values that has significance (p) <= 0.05
 (order_r1_sig_LCBD <- which(beta_r1_order$p.LCBD <= 0.05))
 (infection_r1_sig_LCBD <- which(beta_r1_infections$p.LCBD <= 0.05))
-(HP_r1_sig_LCBD <- which(beta_r1_HP$p.LCBD <= 0.05))
-(HP_r1_sig_LCBD <- which(beta_r1_HH$p.LCBD <= 0.05))
+# Zone 2 LCBD significant
 
-beta_r1_HH$p.LCBD
-# not too good, but we'll plot those
+(HP_r1_sig_LCBD <- which(beta_r1_HP$p.LCBD <= 0.05))
+(HH_r1_sig_LCBD <- which(beta_r1_HH$p.LCBD <= 0.05))
+# Zone 1 and Zone 4 LCBDs are significant
+
 
 #### Maps of LCBD values and richness per quadrat ####
+
+# prepare the indexes for significant LCBD values
 infection_sig_map <- which(mapped.lcbds$X4_zones == 2)
 HH_sig_map <- which(mapped.lcbds$X4_zones %in% c(1,4))
 
+# LCBD for hosts
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for hosts",
@@ -209,6 +215,7 @@ plot(twc.xy, asp=1, type="n",
 points(twc.xy,pch=15, col="red", bg="red",
        cex=1*sqrt(mapped.lcbds$orderLCBD))
 
+# LCBD for infections
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for infections",
@@ -219,6 +226,7 @@ points(twc.xy,pch=15, col="steelblue2", bg="steelblue2",
 points(twc.xy[infection_sig_map,],pch=15, col="grey",bg="grey",
        cex = 0.5)
 
+# LCBD for host-parasite interactions 
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-P interactions",
@@ -226,6 +234,7 @@ plot(twc.xy, asp=1, type="n",
 points(twc.xy,pch=15, col="green2", bg="steelblue2",
        cex=1*sqrt(mapped.lcbds$H.PLCBD))
 
+# LCBD for host-host interactions
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-H interactions",
@@ -238,25 +247,25 @@ points(twc.xy[HH_sig_map,],pch=15, col="grey",bg="grey",
 
 #### INAKI - SCBD Plots ####
 
-#plot order
+# plot hosts
 plot(sort(beta_r1_order$SCBD,decreasing=T),type="n", 
      main = "SCBD of Host (order)", ylab = "SCBD")
 text(sort(beta_r1_order$SCBD,decreasing=T),
      labels=names(sort(beta_r1_order$SCBD,decreasing=T)),cex=0.5)
 
-#plot infections
+# plot infections
 plot(sort(beta_r1_infections$SCBD,decreasing=T),type="n",
      main = "SCBD of Parasite (infection)", ylab = "SCBD")
 text(sort(beta_r1_infections$SCBD,decreasing=T),
      labels=names(sort(beta_r1_infections$SCBD,decreasing=T)),cex=0.5)
 
-#plot HP
+# plot HP
 plot(sort(beta_r1_HP$SCBD,decreasing=T),type="n", 
      main = "SCBD of H-P interaction (H-P)", ylab = "SCBD")
 text(sort(beta_r1_HP$SCBD,decreasing=T),
      labels=names(sort(beta_r1_HP$SCBD,decreasing=T)),cex=0.5)
 
-#plot HH
+# plot HH
 plot(sort(beta_r1_HH$SCBD,decreasing=T),type="n", 
      main = "SCBD of H-H interaction", ylab = "SCBD")
 text(sort(beta_r1_HH$SCBD,decreasing=T),
