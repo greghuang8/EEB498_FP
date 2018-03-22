@@ -8,9 +8,9 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.6
+# Version: 1.7
 # Author: Greg Huang
-# Last update: March 21, 2018
+# Last update: March 22, 2018
 #
 # Versions: 
 #         1.1  Quick write up of the code
@@ -20,6 +20,7 @@
 #         1.5  Add code for H-H beta diversity analysis,
 #              also added code for SCBD significance testing
 #         1.6  Add code for LCBD plotting. Script nearing completion.
+#         1.7  Richness, simpson's, and shannon's calculation. Minor edits. 
 # ==============================================================================
 
 #### Install required packages ####
@@ -35,7 +36,7 @@ if(!require(adespatial, quietly = TRUE)){
   library(adespatial)
 }
 
-# For rbind with dplyr
+# For rbind (bind_rows) with dplyr
 library(dplyr)
 
 # For ddply with plyr
@@ -80,6 +81,39 @@ twc.xy <- read.csv("twc_cellid_xy.csv")
 
 # The LCBD values are mapped to the 699 unique locations
 mapped.lcbds <- read.csv("LCBDs_699.csv")
+
+#### Richness, Shannon's, and Simpson's Diversity ####
+
+# Hosts first.
+# Richness:
+host_richness <- specnumber(order_counts)
+# [1] 12 11 9 9   --> zone 1 has 12 species of host, zone 4 has 9
+
+# Shannon's diversity:
+host_shannon <- diversity(order_counts, index = "shannon")
+# [1] 1.781563 1.656568 1.455235 1.192677  (again zone 1-4 in order)
+
+# Simpson's diversity: 
+host_simpson <- diversity(order_counts, index = "simpson")
+# 0.7831461 0.7594362 0.6975737 0.6067890
+
+# Calculate the rest; infections, H-P, and H-H.
+# Infections:
+infection_richness <- specnumber(infection_counts)
+infection_shannon <- diversity(infection_counts, index = "shannon")
+infection_simpson <- diversity(infection_counts, index = "simpson")
+
+# Host-parasite interactions:
+HP_richness <- specnumber(HP_counts)
+# [1] 36 31 34 30
+HP_shannon <- diversity(HP_counts, index = "shannon")
+HP_simpson <- diversity(HP_counts, index = "simpson")
+
+# Host-Host interactions
+HH_richness <- specnumber(HH_transpose)
+# 67 65 59 58 
+HH_shannon <- diversity(HH_transpose, index = "shannon")
+HH_simpson <- diversity(HH_transpose, index = "simpson")
 
 #### Beta diversity calculation and Output ####
 
@@ -158,39 +192,49 @@ HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
 # count the locations of p.LCBD values that has significance (p) <= 0.05
 (order_r1_sig_LCBD <- which(beta_r1_order$p.LCBD <= 0.05))
 (infection_r1_sig_LCBD <- which(beta_r1_infections$p.LCBD <= 0.05))
-(HP_r1_HP_LCBD <- which(beta_r1_HP$p.LCBD <= 0.05))
-(HP_r1_HH_LCBD <- which(beta_r1_HH$p.LCBD <= 0.05))
+(HP_r1_sig_LCBD <- which(beta_r1_HP$p.LCBD <= 0.05))
+(HP_r1_sig_LCBD <- which(beta_r1_HH$p.LCBD <= 0.05))
+
+beta_r1_HH$p.LCBD
 # not too good, but we'll plot those
 
 #### Maps of LCBD values and richness per quadrat ####
+infection_sig_map <- which(mapped.lcbds$X4_zones == 2)
+HH_sig_map <- which(mapped.lcbds$X4_zones %in% c(1,4))
 
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for hosts",
-     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+     xlim=c(-80,-79), ylim=c(43.5,44))
 points(twc.xy,pch=15, col="red", bg="red",
        cex=1*sqrt(mapped.lcbds$orderLCBD))
 
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for infections",
-     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+     xlim=c(-80,-79), ylim=c(43.5,44))
 points(twc.xy,pch=15, col="steelblue2", bg="steelblue2",
        cex=1*sqrt(mapped.lcbds$InfectionLCBD))
+# overlay the maps with significant LCBDs
+points(twc.xy[infection_sig_map,],pch=15, col="grey",bg="grey",
+       cex = 0.5)
 
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-P interactions",
-     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
-points(twc.xy,pch=15, col="green", bg="steelblue2",
+     xlim=c(-80,-79), ylim=c(43.5,44))
+points(twc.xy,pch=15, col="green2", bg="steelblue2",
        cex=1*sqrt(mapped.lcbds$H.PLCBD))
 
 plot(twc.xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-H interactions",
-     xlim=c(-81.5,-78), ylim=c(42.5,44.5))
+     xlim=c(-80,-79), ylim=c(43.5,44))
 points(twc.xy,pch=15, col="orange", bg="steelblue2",
        cex=1*sqrt(mapped.lcbds$HHLCBD))
+# overlay the maps with significant LCBDs
+points(twc.xy[HH_sig_map,],pch=15, col="grey",bg="grey",
+       cex = 0.5)
 
 #### INAKI - SCBD Plots ####
 
