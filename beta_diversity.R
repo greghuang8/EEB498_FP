@@ -77,11 +77,11 @@ HH_transpose <- data.frame(t(HH_unique[-1]))
 colnames(HH_transpose) <- HH_unique[,1]
 rownames(HH_transpose) <- c(1:4)
 
-# For mapping: twc.xy contains xy coordinates of each point
-twc.xy <- read.csv("twc_cellid_xy.csv")
+# For mapping: twc_xy contains xy coordinates of each point
+twc_xy <- read.csv("twc_cellid_xy.csv")
 
 # The LCBD values are mapped to the 699 unique locations
-mapped.lcbds <- read.csv("LCBDs_699.csv")
+mapped_lcbds <- read.csv("LCBDs_699.csv")
 
 #### Richness, Shannon's, and Simpson's Diversity ####
 
@@ -204,45 +204,45 @@ HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
 #### Maps of LCBD values and richness per quadrat ####
 
 # prepare the indexes for significant LCBD values
-infection_sig_map <- which(mapped.lcbds$X4_zones == 2)
-HH_sig_map <- which(mapped.lcbds$X4_zones %in% c(1,4))
+infection_sig_map <- which(mapped_lcbds$X4_zones == 2)
+HH_sig_map <- which(mapped_lcbds$X4_zones %in% c(1,4))
 
 # LCBD for hosts
-plot(twc.xy, asp=1, type="n",
+plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for hosts",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc.xy,pch=15, col="red", bg="red",
-       cex=1*sqrt(mapped.lcbds$orderLCBD))
+points(twc_xy,pch=15, col="red", bg="red",
+       cex=1*sqrt(mapped_lcbds$orderLCBD))
 
 # LCBD for infections
-plot(twc.xy, asp=1, type="n",
+plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for infections",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc.xy,pch=15, col="steelblue2", bg="steelblue2",
-       cex=1*sqrt(mapped.lcbds$InfectionLCBD))
+points(twc_xy,pch=15, col="steelblue2", bg="steelblue2",
+       cex=1*sqrt(mapped_lcbds$InfectionLCBD))
 # overlay the maps with significant LCBDs
-points(twc.xy[infection_sig_map,],pch=15, col="grey",bg="grey",
+points(twc_xy[infection_sig_map,],pch=15, col="grey",bg="grey",
        cex = 0.5)
 
 # LCBD for host-parasite interactions 
-plot(twc.xy, asp=1, type="n",
+plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-P interactions",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc.xy,pch=15, col="green2", bg="steelblue2",
-       cex=1*sqrt(mapped.lcbds$H.PLCBD))
+points(twc_xy,pch=15, col="green2", bg="steelblue2",
+       cex=1*sqrt(mapped_lcbds$H.PLCBD))
 
 # LCBD for host-host interactions
-plot(twc.xy, asp=1, type="n",
+plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-H interactions",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc.xy,pch=15, col="orange", bg="steelblue2",
-       cex=1*sqrt(mapped.lcbds$HHLCBD))
+points(twc_xy,pch=15, col="orange", bg="steelblue2",
+       cex=1*sqrt(mapped_lcbds$HHLCBD))
 # overlay the maps with significant LCBDs
-points(twc.xy[HH_sig_map,],pch=15, col="grey",bg="grey",
+points(twc_xy[HH_sig_map,],pch=15, col="grey",bg="grey",
        cex = 0.5)
 
 #### INAKI - SCBD Plots ####
