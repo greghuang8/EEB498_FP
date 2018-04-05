@@ -8,9 +8,9 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.8
+# Version: 1.9
 # Author: Greg Huang
-# Last update: March 22, 2018
+# Last update: April 5th, 2018
 #
 # Versions: 
 #         1.1  Quick write up of the code
@@ -19,9 +19,10 @@
 #         1.4  Plot edits
 #         1.5  Add code for H-H beta diversity analysis,
 #              also added code for SCBD significance testing
-#         1.6  Add code for LCBD plotting. Script nearing completion.
-#         1.7  Richness, simpson's, and shannon's calculation. 
+#         1.6  Add code for LCBD plotting. Script nearing completion
+#         1.7  Richness, simpson's, and shannon's calculation
 #         1.8  Edit comments and typos
+#         1.9  Tiny update for SCBD significance list generation
 # ==============================================================================
 
 #### Install required packages ####
@@ -174,20 +175,25 @@ order_SCBD_mean <- mean(order_SCBD$beta_r1_order.SCBD)
 order_sig_SCBD <- which(order_SCBD$beta_r1_order.SCBD >= order_SCBD_mean)
 # int[1:3] 4 7 9
 # three significant SCBD values for our hosts
+significant_order_SCBD <- (rownames(order_SCBD))[order_sig_SCBD]
 
 # Parasites
 infection_SCBD_mean <- mean(infections_SCBD$beta_r1_infections.SCBD)
 infection_sig_SCBD <- which(infections_SCBD$beta_r1_infections.SCBD >= 
                               infection_SCBD_mean)
+significant_infections_SCBD <- (rownames(infections_SCBD))[infection_sig_SCBD]
 # 2 significant SCBD values for parasites
 
 # Host-Parasite Interactions
 HP_SCBD_mean <- mean(HP_SCBD$beta_r1_HP.SCBD)
 HP_sig_SCBD <- which(HP_SCBD$beta_r1_HP.SCBD >= HP_SCBD_mean)
+significant_HP_SCBD <- (rownames(HP_SCBD))[HP_sig_SCBD]
+
 
 # Host-Host Interactions
 HH_SCBD_mean <- mean(HH_SCBD$beta_r1_HH.SCBD)
 HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
+significant_HH_SCBD <- (rownames(HH_SCBD))[HH_sig_SCBD]
 
 #### Check for LCBD significance ####
 
