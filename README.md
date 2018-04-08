@@ -2,6 +2,7 @@
 
 ## Introduction
 This project contains all necessary code and files to produce the personal project (excluding work-study gibberish) for EEB498.
+Code developed for this project is in beta_diversity.R, with some minor edits in watt_bipart_script.R. 
 
 ## File names and contents/purpose
 
