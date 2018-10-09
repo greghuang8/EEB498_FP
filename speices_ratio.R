@@ -143,13 +143,23 @@ for (i in list_of_species){
   export_df <- rbind(export_df,df) 
 }
 
+# export the species ratios for species found in both the subset
+# and the master 
 write.csv(export_df, "species_ratios.csv")
+
+# there are species that were collected in the master
+# that were never used in the subset; i.e. they are healthy
+# and not infected by parasites or bacteria
+
 unique(big$Species)
 unique(big_w_spec$Species)
+
+# find the species that are not selected in the subset and calculate
+# the frequencies
 test <- as.data.frame(table(big_w_spec$Species))
 match3 <- !(big_w_spec$Species %in% export_df$Species)
 new3 <- as.data.frame(big_w_spec[match3,])
 not_included <- as.data.frame(table(new3$Species))
 
+# export csv
 write.csv(not_included, "unselected_species_counts.csv")
-barplot()
