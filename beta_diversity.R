@@ -175,25 +175,31 @@ order_SCBD_mean <- mean(order_SCBD$beta_r1_order.SCBD)
 order_sig_SCBD <- which(order_SCBD$beta_r1_order.SCBD >= order_SCBD_mean)
 # int[1:3] 4 7 9
 # three significant SCBD values for our hosts
-significant_order_SCBD <- (rownames(order_SCBD))[order_sig_SCBD]
+significant_order_SCBD <- as.data.frame((rownames(order_SCBD))[order_sig_SCBD]) 
+colnames(significant_order_SCBD) <- c("Host SCBD")
+
 
 # Parasites
 infection_SCBD_mean <- mean(infections_SCBD$beta_r1_infections.SCBD)
 infection_sig_SCBD <- which(infections_SCBD$beta_r1_infections.SCBD >= 
                               infection_SCBD_mean)
-significant_infections_SCBD <- (rownames(infections_SCBD))[infection_sig_SCBD]
+significant_infections_SCBD <- as.data.frame((rownames(infections_SCBD))[infection_sig_SCBD])
+colnames(significant_infections_SCBD) <- c("Parasite SCBD")
+
 # 2 significant SCBD values for parasites
 
 # Host-Parasite Interactions
 HP_SCBD_mean <- mean(HP_SCBD$beta_r1_HP.SCBD)
 HP_sig_SCBD <- which(HP_SCBD$beta_r1_HP.SCBD >= HP_SCBD_mean)
-significant_HP_SCBD <- (rownames(HP_SCBD))[HP_sig_SCBD]
-
+significant_HP_SCBD <- as.data.frame((rownames(HP_SCBD))[HP_sig_SCBD])
+colnames(significant_HP_SCBD) <- c("HP SCBD")
 
 # Host-Host Interactions
 HH_SCBD_mean <- mean(HH_SCBD$beta_r1_HH.SCBD)
 HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
-significant_HH_SCBD <- (rownames(HH_SCBD))[HH_sig_SCBD]
+significant_HH_SCBD <- as.data.frame((rownames(HH_SCBD))[HH_sig_SCBD])
+colnames(significant_HH_SCBD) <- c("HH SCBD")
+
 
 #### Check for LCBD significance ####
 
@@ -226,10 +232,10 @@ plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for infections",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc_xy,pch=15, col="steelblue2", bg="steelblue2",
+points(twc_xy,pch=15, col="grey", bg="grey",
        cex=1*sqrt(mapped_lcbds$InfectionLCBD))
 # overlay the maps with significant LCBDs
-points(twc_xy[infection_sig_map,],pch=15, col="grey",bg="grey",
+points(twc_xy[infection_sig_map,],pch=15, col="black",bg="black",
        cex = 0.5)
 
 # LCBD for host-parasite interactions 
@@ -245,10 +251,10 @@ plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-H interactions",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc_xy,pch=15, col="orange", bg="steelblue2",
+points(twc_xy,pch=15, col="grey", bg="grey",
        cex=1*sqrt(mapped_lcbds$HHLCBD))
 # overlay the maps with significant LCBDs
-points(twc_xy[HH_sig_map,],pch=15, col="grey",bg="grey",
+points(twc_xy[HH_sig_map,],pch=15, col="black",bg="black",
        cex = 0.5)
 
 #### INAKI - SCBD Plots ####

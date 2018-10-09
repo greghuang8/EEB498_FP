@@ -23,6 +23,7 @@ big <- read.csv("TWC_Species_LU_Feb2015.csv", header = T,
 small <- read.csv("all_entries_updated_zones.csv", header = T, 
                   stringsAsFactors = FALSE)
 
+
 #### Determine which ratios to look for ####
 unique(small$ClassOrder)
 # [1] "Small Carnivores"        "Pigeons and Doves"       "Large Carnivores"       
@@ -39,6 +40,8 @@ unique(big$Group_)
 
 # replace NA with string "NA"
 big[is.na(big)] <- "NA"
+
+#### Group-wise ratio calculations ####
 
 # Small carnivores
 a <- sum(str_count(small$ClassOrder, "Small Carnivores")) #595
@@ -101,3 +104,52 @@ b <- sum(str_count(big$Group_, "Raptor")) #850
 owls_ratio <- a/b             #0.006
 
 
+#### Species-wise ratio calculations ####
+
+#uniq_spec <- as.data.frame(unique(big$Species))
+#simple_spec <- gsub(",.*", "", uniq_spec$`unique(big$Species)`)
+#uniq_simple_spec <- as.data.frame(unique(simple_spec))
+
+# Step 1: Merge the two data sets 
+big_w_spec <- read.csv("Big_ID_spec_only.csv", stringsAsFactors = FALSE)
+small_IDs <- read.csv("Small_ID_only.csv", stringsAsFactors = FALSE)
+
+matched <- big_w_spec$BIG_ID %in% small_IDs$Small_ID
+table(matched)["TRUE"]
+new <- as.data.frame(big_w_spec[matched,])
+write.csv(new, "small_set_with_species.csv")
+
+list_of_species <- unique(new$Species)
+#Identification/ratio of the 45 different species
+
+match2 <- small_IDs$Small_ID %in% big_w_spec$BIG_ID
+table(match2)["TRUE"]
+new2 <- as.data.frame(big_w_spec[match2,])
+
+#Test
+a <- sum(str_count(new$Species, "Coyote")) #37
+b <- sum(str_count(big_w_spec$Species, "Coyote")) #74
+
+export_df <- data.frame("Test1", 5, 10, 0.5)
+names(export_df) <- c("Species", "Count in subset", "Count in original", "ratio")
+
+# For each of the unique items in list_of_species, calculate the ratios
+for (i in list_of_species){
+  a <- sum(str_count(new$Species, i))
+  b <- sum(str_count(big_w_spec$Species, i))
+  ratio <- a/b
+  df <- data.frame(i, a, b, ratio)
+  names(df) <- c("Species", "Count in subset", "Count in original", "ratio")
+  export_df <- rbind(export_df,df) 
+}
+
+write.csv(export_df, "species_ratios.csv")
+unique(big$Species)
+unique(big_w_spec$Species)
+test <- as.data.frame(table(big_w_spec$Species))
+match3 <- !(big_w_spec$Species %in% export_df$Species)
+new3 <- as.data.frame(big_w_spec[match3,])
+not_included <- as.data.frame(table(new3$Species))
+
+write.csv(not_included, "unselected_species_counts.csv")
+barplot()
