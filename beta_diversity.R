@@ -8,9 +8,9 @@
 # then potentially for the more refined, yearly zone csv files.
 # The beta diversities will encompass the hosts and parasites. 
 # 
-# Version: 1.9
+# Version: 2.0
 # Author: Greg Huang
-# Last update: April 5th, 2018
+# Last update: December 4th, 2018
 #
 # Versions: 
 #         1.1  Quick write up of the code
@@ -23,6 +23,8 @@
 #         1.7  Richness, simpson's, and shannon's calculation
 #         1.8  Edit comments and typos
 #         1.9  Tiny update for SCBD significance list generation
+#         2.0  Changed colours for LCBS plots; minor updates for code that
+#              loads required packages; added write.csv lines to save files
 # ==============================================================================
 
 #### Install required packages ####
@@ -39,6 +41,7 @@ if(!require(adespatial, quietly = TRUE)){
 }
 
 # For rbind (bind_rows) with dplyr
+install.packages("dplyr")
 library(dplyr)
 
 # For ddply with plyr
@@ -177,6 +180,7 @@ order_sig_SCBD <- which(order_SCBD$beta_r1_order.SCBD >= order_SCBD_mean)
 # three significant SCBD values for our hosts
 significant_order_SCBD <- as.data.frame((rownames(order_SCBD))[order_sig_SCBD]) 
 colnames(significant_order_SCBD) <- c("Host SCBD")
+write.csv(significant_order_SCBD, file = "SCBD_HOST_SIG.csv")
 
 
 # Parasites
@@ -185,6 +189,7 @@ infection_sig_SCBD <- which(infections_SCBD$beta_r1_infections.SCBD >=
                               infection_SCBD_mean)
 significant_infections_SCBD <- as.data.frame((rownames(infections_SCBD))[infection_sig_SCBD])
 colnames(significant_infections_SCBD) <- c("Parasite SCBD")
+write.csv(significant_infections_SCBD, file = "SCBD_PARASITE_SIG.csv")
 
 # 2 significant SCBD values for parasites
 
@@ -193,12 +198,14 @@ HP_SCBD_mean <- mean(HP_SCBD$beta_r1_HP.SCBD)
 HP_sig_SCBD <- which(HP_SCBD$beta_r1_HP.SCBD >= HP_SCBD_mean)
 significant_HP_SCBD <- as.data.frame((rownames(HP_SCBD))[HP_sig_SCBD])
 colnames(significant_HP_SCBD) <- c("HP SCBD")
+write.csv(significant_HP_SCBD, file = "SCBD_HP_SIG.csv") 
 
 # Host-Host Interactions
 HH_SCBD_mean <- mean(HH_SCBD$beta_r1_HH.SCBD)
 HH_sig_SCBD <- which(HH_SCBD$beta_r1_HH.SCBD >= HH_SCBD_mean)
 significant_HH_SCBD <- as.data.frame((rownames(HH_SCBD))[HH_sig_SCBD])
 colnames(significant_HH_SCBD) <- c("HH SCBD")
+write.csv(significant_HH_SCBD, file = "SCBD_HH_SIG.csv") 
 
 
 #### Check for LCBD significance ####
@@ -224,13 +231,13 @@ plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for hosts",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc_xy,pch=15, col="red", bg="red",
+points(twc_xy,pch=15, col="grey", bg="grey",
        cex=1*sqrt(mapped_lcbds$orderLCBD))
 
-# LCBD for infections
+# LCBD for parasites
 plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
-     main="LCBD indices, for infections",
+     main="LCBD indices, for parasites",
      xlim=c(-80,-79), ylim=c(43.5,44))
 points(twc_xy,pch=15, col="grey", bg="grey",
        cex=1*sqrt(mapped_lcbds$InfectionLCBD))
@@ -243,7 +250,7 @@ plot(twc_xy, asp=1, type="n",
      xlab="Longitude (m)", ylab="Latitude (m)",
      main="LCBD indices, for H-P interactions",
      xlim=c(-80,-79), ylim=c(43.5,44))
-points(twc_xy,pch=15, col="green2", bg="steelblue2",
+points(twc_xy,pch=15, col="grey", bg="grey",
        cex=1*sqrt(mapped_lcbds$H.PLCBD))
 
 # LCBD for host-host interactions
@@ -261,13 +268,13 @@ points(twc_xy[HH_sig_map,],pch=15, col="black",bg="black",
 
 # plot hosts
 plot(sort(beta_r1_order$SCBD,decreasing=T),type="n", 
-     main = "SCBD of Host (order)", ylab = "SCBD")
+     main = "SCBD of Hosts", ylab = "SCBD")
 text(sort(beta_r1_order$SCBD,decreasing=T),
      labels=names(sort(beta_r1_order$SCBD,decreasing=T)),cex=0.5)
 
 # plot infections
 plot(sort(beta_r1_infections$SCBD,decreasing=T),type="n",
-     main = "SCBD of Parasite (infection)", ylab = "SCBD")
+     main = "SCBD of Parasites", ylab = "SCBD")
 text(sort(beta_r1_infections$SCBD,decreasing=T),
      labels=names(sort(beta_r1_infections$SCBD,decreasing=T)),cex=0.5)
 

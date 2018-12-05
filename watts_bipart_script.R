@@ -11,7 +11,7 @@ library(bipartite)
 
 ######READ IN URBAN DATA (MARCH2015)
 
-twc = read.csv("updated_zone2_2007.csv", header=TRUE)
+twc = read.csv("updated_zone4_all.csv", header=TRUE)
 str(twc)
 
 ###TRANSPOSE: Create an interaction matrix from a prexisting dataframe (community-matrix style, with sites as rows and observations by column)
@@ -42,16 +42,16 @@ bipart_twc_all
 
 ###PLOTWEB: Visualize a bipartite interaction matrix (e.g. a foodweb)
 plotweb_twc = plotweb(bipart_twc_all,
-                      method = "normal", empty = TRUE, labsize = 1, ybig = 1.8, y.width.low = 0.1,
+                      method = "normal", empty = TRUE, labsize = 0.9, ybig = 1.8, y.width.low = 0.1,
                       y.width.high = 0.1, low.spacing = NULL, high.spacing = NULL,
-                      arrow="down", col.interaction="gray30", col.high = "maroon4",
-                      col.low="mediumaquamarine", bor.col.interaction ="gray30", bor.col.high="maroon4",
-                      bor.col.low="mediumaquamarine", high.lablength = NULL, low.lablength = NULL,
+                      arrow="down", col.interaction="gray30", col.high = "ivory3",
+                      col.low="grey39", bor.col.interaction ="gray30", bor.col.high="ivory3",
+                      bor.col.low="grey39", high.lablength = NULL, low.lablength = NULL,
                       sequence=NULL, low.abun=NULL, low.abun.col="green",
                       bor.low.abun.col ="black", high.abun=NULL, high.abun.col="red",
                       bor.high.abun.col="black", text.rot=90, text.high.col="black",
                       text.low.col="black", adj.high=NULL, adj.low=NULL, plot.axes = FALSE,
-                      low.y=1.1, high.y=2.1, add=FALSE, y.lim=NULL, x.lim=NULL, low.plot=TRUE,
+                      low.y=1.5, high.y=2.4, add=FALSE, y.lim=NULL, x.lim=NULL, low.plot=TRUE,
                       high.plot=TRUE, high.xoff = 0, low.xoff = 0, high.lab.dis = NULL,
                       low.lab.dis = NULL, abuns.type="additional")
 
